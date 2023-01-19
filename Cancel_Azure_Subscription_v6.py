@@ -1,4 +1,4 @@
-# subscription_id = "e2af6d23-4a34-4ffc-a6b5-24b197225321"
+
 # Az login - login first
 
 
