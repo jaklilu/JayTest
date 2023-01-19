@@ -20,3 +20,4 @@ Code is created in Vscode, therefore, it requires multiple Azure extensions. Als
 Code was written on Windows Desktop. 
 Make sure you login to Azure prior to running code. Have subscription id handy when prompted.
 After each stages execute successfully, you will see a text in neon green " Stage 1, Stage 2, etc... is completed."
+Done
