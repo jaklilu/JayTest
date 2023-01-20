@@ -6,7 +6,7 @@ The code has five stages.
 	Requires login to Azure
 	Prompts for Subscription id
 	Prompts for verification of subscription id
-2-Granting the user owner rights to subscription
+## 2-Granting the user owner rights to subscription
 	Uses current logged in user object id
 3-Canceling subscription
 	Cancel subscription using REST API. Only method Microsoft provides
