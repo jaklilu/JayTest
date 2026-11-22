@@ -8,16 +8,29 @@ import time
 from azure.identity import DefaultAzureCredential
 import requests
 from azure.cli.core import get_default_cli
-import subprocess
 
 # **************************************** Stage 1 Create Azure Exempt Policy ****************************************
 
-# *********** Step 1a Read subscription id from AZURE_SUBSCRIPTION_ID ***********
+# *********** Step 1a Read Azure identifiers from environment variables ***********
 try:
     subscription_id = os.environ['AZURE_SUBSCRIPTION_ID']
 except KeyError:
     raise SystemExit(
         "AZURE_SUBSCRIPTION_ID is not set. Export the Azure subscription ID "
+        "in that environment variable before running this script."
+    )
+try:
+    management_group_id = os.environ['AZURE_MANAGEMENT_GROUP_ID']
+except KeyError:
+    raise SystemExit(
+        "AZURE_MANAGEMENT_GROUP_ID is not set. Export the Azure management group ID "
+        "in that environment variable before running this script."
+    )
+try:
+    user_object_id = os.environ['AZURE_USER_OBJECT_ID']
+except KeyError:
+    raise SystemExit(
+        "AZURE_USER_OBJECT_ID is not set. Export the Azure user object ID "
         "in that environment variable before running this script."
     )
 
@@ -47,7 +60,7 @@ cli = get_default_cli()
 result = cli.invoke(
     ["policy", "exemption", "create", "--name", "Allow Owner for Azure Decom Test AZ CLI",
      "--display-name", "Allow Owner For Azure Decom Test AZ CLI",
-     "--policy-assignment", "/providers/Microsoft.Management/managementGroups/a4454629-85ac-4c26-b6be-438709073c2a/providers/Microsoft.Authorization/policyAssignments/c34560e1adab441d96fe8cf7",
+     "--policy-assignment", f"/providers/Microsoft.Management/managementGroups/{management_group_id}/providers/Microsoft.Authorization/policyAssignments/c34560e1adab441d96fe8cf7",
      "--exemption-category", "Waiver", "--scope", f"/subscriptions/{subscription_id}"]
 )
 print("\n")
@@ -56,17 +69,6 @@ print("\033[38;2;0;255;0mStage 1 creating exemptions policy is completed! \033[0
 
 # **************************************** Stage 2 Grant Owner rights to user object id ****************************************
 
-# *********** Step 2a Pull the user_object_id of current logged in user ***********
-def get_current_logged_in_id():
-    command = "az ad signed-in-user show --query id"
-    output = subprocess.run(command, capture_output=True, shell=True).stdout
-    # remove quotation mark from the output
-    return output.decode("utf-8").replace('"', '')
-
-
-user_object_id = get_current_logged_in_id()
-#print(user_object_id)
-
 # *********** Step 2b Grant current user object id an Owner Rights ***********
 cli = get_default_cli()
 result = cli.invoke(
@@ -74,7 +76,6 @@ result = cli.invoke(
      "--assignee-principal-type", "User", "--role", "owner", "--scope", f"/subscriptions/{subscription_id}"]
 )
 print("\n")
-print(user_object_id)
 print("\033[38;2;0;255;0mStage 2 granting owner rights is completed! \033[0m")
 print("\n")
 print("\n")
@@ -174,18 +175,6 @@ print("\n")
 
 # **************************************** Stage 5 Remove Owner Rights ****************************************
 
-
-# *********** Step 5a Pull the user_object_id of the current logged in user ***********
-
-def get_current_logged_in_id():
-    command = "az ad signed-in-user show --query id"
-    output = subprocess.run(command, capture_output=True, shell=True).stdout
-    # remove quotation mark and trailing space from the output
-    return output.decode("utf-8").replace('"', '').strip()
-
-
-user_object_id = get_current_logged_in_id()
-print(user_object_id)
 
 # *********** Step 5b Remove owner rights from the user object id ***********
 cli = get_default_cli()
