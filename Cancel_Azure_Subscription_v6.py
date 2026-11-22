@@ -2,6 +2,7 @@
 # Az login - login first
 
 
+import os
 import azure.mgmt.subscription
 import time
 from azure.identity import DefaultAzureCredential
@@ -11,9 +12,14 @@ import subprocess
 
 # **************************************** Stage 1 Create Azure Exempt Policy ****************************************
 
-# *********** Step 1a Create input request for subscription id ***********
-subscription_id = input(
-    "What is the subscription id you would like to cancel? ")
+# *********** Step 1a Read subscription id from AZURE_SUBSCRIPTION_ID ***********
+try:
+    subscription_id = os.environ['AZURE_SUBSCRIPTION_ID']
+except KeyError:
+    raise SystemExit(
+        "AZURE_SUBSCRIPTION_ID is not set. Export the Azure subscription ID "
+        "in that environment variable before running this script."
+    )
 
 # *********** Step 1b confirm if this is the correct subscription id ***********
 

@@ -4,7 +4,7 @@ The code will cancel Azure subscription without deleting any of the resources. T
 The code has five stages. 
 ### 1-Creating Exemption policy
 	Requires login to Azure
-	Prompts for Subscription id
+	Reads subscription id from the AZURE_SUBSCRIPTION_ID environment variable (exits with a clear error if unset)
 	Prompts for verification of subscription id
 ### 2-Granting the user owner rights to subscription
 	Uses current logged in user object id
@@ -14,10 +14,10 @@ The code has five stages.
 	Checks status every 10 seconds for confirmation
 ### 5-Remove owner rights from user
 
-The code will require login to Azure before execution. It will prompt for subscription id; it will grant owner rights to current logged in user object id. 
+The code will require login to Azure before execution. Set `AZURE_SUBSCRIPTION_ID` to the subscription to cancel (the script exits with an error if this variable is unset). It will grant owner rights to current logged in user object id. 
 
 Code is created in Vscode, therefore, it requires multiple Azure extensions. Also, Azure CLI and multiple modules like, time, requests, subprocess, azure.identity and azure.mgmt.subscription are required.
 Code was written on Windows Desktop. 
-Make sure you login to Azure prior to running code. Have subscription id handy when prompted.
+Make sure you login to Azure prior to running code. Export `AZURE_SUBSCRIPTION_ID` before running; do not hard-code a subscription ID in the script.
 After each stages execute successfully, you will see a text in neon green " Stage 1, Stage 2, etc... is completed."
 Done
